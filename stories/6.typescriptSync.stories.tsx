@@ -1,5 +1,5 @@
-import { Story, Source, Title, Description } from "@storybook/blocks";
-import type { Meta, StoryObj } from "@storybook/react";
+import { Story, Source, Title, Description } from "@storybook/addon-docs/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { Tabs, Tab, Divider, Box} from '@mui/material';
 import { DEFAULT_FILENAME } from '../packages/core/scripts/sync-user-types/constants';
@@ -100,8 +100,8 @@ const { typeSync } = require('@hakit/core/sync');
 
 async function runner() {
   await typeSync({
-    url: 'https://rwdwrtzkr59smlxgb934b72q647a3zr1.ui.nabu.casa',
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmN2M1YzkwYmYxMGM0ZjI2YjdkYjI4NDI1MDI3YWViZSIsImlhdCI6MTY5MjU5NDQ1MCwiZXhwIjoyMDA3OTU0NDUwfQ.QbdMf_A0nVovZNyV5ZPpeRaqWfz4NwWnXuhV5pQ0WCw'
+    url: 'YOUR_HOME_ASSISTANT_URL',
+    token: 'YOUR_LONG_LIVED_TOKEN'
   })
 }
 

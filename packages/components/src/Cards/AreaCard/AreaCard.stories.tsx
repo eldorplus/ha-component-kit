@@ -1,11 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Source } from "@storybook/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Source } from "@storybook/addon-docs/blocks";
 import { ThemeProvider, AreaCard, Row, ButtonCard, ThemeControlsModal } from "@components";
 import type { AreaCardProps } from "@components";
 import jsxToString from "react-element-to-jsx-string";
 import { HassConnect } from "@hass-connect-fake";
 import office from "./office.jpg";
 import livingRoom from "./living-room.jpg";
+import hashExample from "./examples/hashExample.code?raw";
+
 function Template(args: AreaCardProps) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
@@ -69,24 +71,6 @@ function TemplateFull() {
     </>
   );
 }
-
-const hashExample = `function UseHashExample() {
-  const { useStore } = useHass();
-  const setHash = useStore((store) => store.setHash);
-  return (
-    <Row fullHeight fullWidth>
-      <AreaCard image={office} title="Office" icon="mdi:office-chair" hash="office">
-        The office is active!
-      </AreaCard>
-      <ButtonCard
-        title="Trigger the office!"
-        onClick={() => {
-          setHash("office");
-        }}
-      />
-    </Row>
-  );
-}`;
 
 export default {
   title: "components/Cards/AreaCard",

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj, Args } from "@storybook/react";
+import type { Meta, StoryObj, Args } from "@storybook/react-vite";
 import { ThemeProvider, EntitiesCard, ThemeControlsModal, EntitiesCardRow, Alert, Column } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
@@ -37,7 +37,7 @@ function Render(args?: Args) {
 export default {
   title: "components/Cards/EntitiesCard",
   component: EntitiesCard,
-  subcomponents: { EntitiesCardRow },
+  subcomponents: { EntitiesCardRow: EntitiesCardRow as React.ComponentType<unknown> },
   tags: ["autodocs"],
   parameters: {
     fullWidth: true,

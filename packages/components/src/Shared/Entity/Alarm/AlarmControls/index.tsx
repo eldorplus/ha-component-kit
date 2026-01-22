@@ -186,8 +186,7 @@ function InternalAlarmControls({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [inputVal, setInputVal] = useState<string>(defaultCode ? `${defaultCode}` : "");
   const entity = useEntity(_entity);
-  const { useStore } = useHass();
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
 
   const states = _states || filterSupportedAlarmStates(entity, DEFAULT_STATES);
 

@@ -1,5 +1,5 @@
-import { create } from '@storybook/theming/create';
-import { addons } from '@storybook/manager-api';
+import { create } from 'storybook/theming/create';
+import { addons } from 'storybook/manager-api';
 
 const theme = create({
     base: 'dark',
@@ -15,11 +15,14 @@ addons.setConfig({
     theme,
     sidebar: {
       renderLabel(item) {
-        if (item.type === 'root' && item.name === 'core') {
+        if (item.type === 'root' && item.name.toLowerCase() === 'core') {
           return '@hakit/core';
         }
-        if (item.type === 'root' && item.name === 'components') {
+        if (item.type === 'root' && item.name.toLowerCase() === 'components') {
           return '@hakit/components';
+        }
+        if (item.type === 'root' && item.name.toLowerCase() === 'editor') {
+          return '@hakit/editor';
         }
         return item.name;
       }

@@ -1,15 +1,16 @@
 import { HassConnect } from "hass-connect-fake";
-import { Story } from "@storybook/blocks";
-import type { Meta, StoryObj } from "@storybook/react";
+import { Story } from "@storybook/addon-docs/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Component } from "./basic.code";
 import { ThemeProvider, FabCard } from "@hakit/components";
 import { useHass } from "@hakit/core";
 import { Column, Row } from "@components";
 
 function ShutDown() {
-  const { useStore } = useHass();
-  const setConfig = useStore((state) => state.setConfig);
-  const config = useStore((state) => state.config);
+  // @ts-expect-error - Types are intentionally missing, but they do exist, we just don't
+  // encourage users to use these internal methods directly.
+  const setConfig = useHass((state) => state.setConfig);
+  const config = useHass((state) => state.config);
 
   if (!config) return null;
   // This example code here will not actually trigger the shutdown in a real world scenario

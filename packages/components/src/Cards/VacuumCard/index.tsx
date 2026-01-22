@@ -41,9 +41,8 @@ function InternalVacuumCard({
   locatingNode,
   ...rest
 }: VacuumCardProps) {
-  const { useStore } = useHass();
   const [flash, setFlash] = useState(false);
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const entity = useEntity(_entity);
 
   const titleValue = useMemo(() => {

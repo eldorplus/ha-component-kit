@@ -139,11 +139,10 @@ function InternalModal({
 }: ModalProps) {
   const _id = useId();
   const prefix = id ?? _id;
-  const { useStore } = useHass();
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
-  const windowContext = useStore((store) => store.windowContext);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
+  const windowContext = useHass((store) => store.windowContext);
   const win = windowContext ?? window;
-  const portalRoot = useStore((store) => store.portalRoot);
+  const portalRoot = useHass((store) => store.portalRoot);
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   const autocloseRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);

@@ -1,11 +1,11 @@
-import { Meta, Source, Story, Canvas } from '@storybook/blocks';
+import { Meta, Source, Story, Canvas } from '@storybook/addon-docs/blocks';
 import basicExample from './examples/basic.code?raw';
 import * as Primary from './examples/primary.stories';
 
 <Meta title="core/hooks/useLightTemperature" />
 
 # useLightTemperature()
-###### `useLightTemperature(entity: HassEntityWithService<"light">)`
+###### `useLightTemperature(entity: HassEntityWithService<"light">): number | undefined`
 
 The `useLightTemperature` hook is a custom React hook that calculates the color temperature of a light entity in a Home Assistant environment.
 

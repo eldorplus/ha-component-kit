@@ -27,9 +27,8 @@ import { useHass } from "@hakit/core";
  * @returns { [key in BreakPoint]: boolean } - Object containing the breakpoint keys and if they're active or not.
  */
 export function useBreakpoint(): { [key in BreakPoint]: boolean } {
-  const { useStore } = useHass();
   const breakpoints = useThemeStore((store) => store.breakpoints);
-  const windowContext = useStore((store) => store.windowContext);
+  const windowContext = useHass((store) => store.windowContext);
   const win = windowContext ?? window;
   const queries = useMemo(() => getBreakpoints(breakpoints), [breakpoints]);
   const [matches, setMatches] = useState(() => Object.fromEntries(allBreakpoints.map((bp) => [bp, false])) as Record<BreakPoint, boolean>);

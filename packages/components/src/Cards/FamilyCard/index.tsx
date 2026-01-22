@@ -16,7 +16,7 @@ import { Children, ReactElement, cloneElement, isValidElement } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 import styled from "@emotion/styled";
-const FamilyBaseCard = styled(CardBase)`
+const FamilyBaseCard = styled(CardBase as React.ComponentType<CardBaseProps<"div", FilterByDomain<EntityName, "person">>>)`
   cursor: default;
 `;
 
@@ -94,8 +94,7 @@ export interface FamilyCardProps extends Omit<CardBaseProps<"div", FilterByDomai
 }
 
 function InternalFamilyCard({ title, key, cssStyles, children, className, ...rest }: FamilyCardProps): React.ReactNode {
-  const { useStore } = useHass();
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const len = Children.count(children);
   const count = len > 2 ? "2-plus" : len === 1 ? "1" : "2";
   const childrenWithKeys = Children.map(children, (child, index) => {

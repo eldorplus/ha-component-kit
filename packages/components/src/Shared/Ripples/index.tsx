@@ -67,8 +67,7 @@ const _Ripples = memo(
   }: RipplesProps) => {
     const rippleRef = useRef<HTMLDivElement | null>(null);
     const timeoutId = useRef<NodeJS.Timeout | null>(null);
-    const { useStore } = useHass();
-    const windowContext = useStore((store) => store.windowContext);
+    const windowContext = useHass((store) => store.windowContext);
     const win = windowContext ?? window;
     useEffect(() => {
       return () => {

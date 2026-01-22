@@ -1,3 +1,187 @@
+# 6.0.1
+
+### General
+CHORE - Locales refreshed to the latest Home Assistant strings/hashes; locale key types updated for new tokens (e.g., any/first/last, additional device status terms).
+
+### @hakit/core
+BUGFIX - HassConnect now guards all window access in suspend/resume and connection flows to avoid SSR/test crashes and ensure inherited connections/auth-callback cleanup stay safe (nextjs fix)
+IMPROVEMENT - Entity registry list derives domain titles via computeDomainTitle, improving labels/search without relying on locale strings.
+IMPROVEMENT - Service schema/types regenerated from the latest HA: frontend.setTheme supports optional light/dark names, scene services add apply/create/delete with transitions, media/recorder constraints refreshed.
+IMPROVEMENT - Humidifier entities expose target_humidity_step for finer control.
+
+### @hakit/components
+No component code changes; version bumped to align with core 6.0.1.
+
+### create-hakit
+Bump to 1.2.3 to consume the latest packages.
+
+# 6.0.0
+
+## Migration Checklist
+Perform these steps in order - Full details below under the BREAKING CHANGES section.
+1. Replace `useStore` usage where accessing helpers/state directly with `useHass` (BREAKING rename). Update any imports & snapshots accordingly.
+2. Remove deprecated `getConfig`, `getServices`, `getUser`, `getStates` calls. Replace with store subscriptions: `useHass(state => state.config)` etc, or snapshots `useHass.getState().config`.
+3. Update `useUsers` hook calls: remove `refetch` usage; pass filtering options directly.
+4. ButtonCard: remove `unitOfMeasurement` prop. Use automatic locale formatting or `customRenderState` for overrides.
+5. ButtonCard/SensorCard: if you relied on automatic domain prefix (e.g. `Light: 50%`), manually add via `description` or `customRenderState`, or use `computeDomainTitle`.
+6. TimeCard: if you depended on implicit entity assignment, explicitly pass entity props OR rely on new browser-time behavior.
+7. Locale keys changed - You may have typescript errors if referencing locale keys that no longer exist.
+8. Migrate any usage of removed `HassContext` / `HassContextProps` (now merged into store). Remove direct context imports.
+9. Adjust any code using previous area structure (`services` removed) as it's information that's not in use (please raise an issue if you need this data for a specific use case).
+
+## BREAKING CHANGES
+
+### @hakit/components
+- BREAKING / BUGFIX - TimeCard - Fixing unexpected lag when no entity option is used, falls behind by up to 30seconds in some cases, now uses browser time directly when no entity is provided. Removed default "entity" assignment if it's available, now users will have to opt into using an entity if they want to use one (breaking change), all dates when using non entity flow are now timezone/language/locale aware using the new locale services.
+- BREAKING - ButtonCard - unitOfMeasurement prop removed, now that we're formatting the same as home assistant, it will respect the users settings for units automatically, if you were using this prop, you will have to remove it and let the component handle the formatting automatically, if you still need to have a custom render state, you can use the `customRenderState` prop to provide your own custom rendering logic.
+- BREAKING - ButtonCard - A subtle breaking change, the automatic "domain" prefix before the state value on ButtonCards/SensorCards has been removed, this means for a light card you'll no longer see "Light: 50%", where 50% is the brightness value, this was redundant information as the Name of the entity is clearly displayed, if you still want to add this prefix back, you can either use `customRenderState` prop to provide your own logic, or you can set the `description` prop to include the domain name if you wish, you can import the `computeDomainTitle` helper from `@hakit/core` to help with this.
+
+### @hakit/core
+- BREAKING -Refactoring all logic around locale generation, locale keys have changed, values will change as users reported a few inconsistencies with home assistant locale values, if you're using the locale services directly you may have to update some keys, all types have been updated accordingly so you should get type errors once upgrading.
+- BREAKING - useHass - The methods - `getConfig`, `getServices`, `getUser`, `getStates` have been removed, this information is now pre-fetched, and will automatically update whenever any of the information changes, you can access this information via the `useStore` hook to subscribe, and retrieve programmatically `const user = useStore(state => state.user);` or to get a snapshot `const user = useStore.getState().user;`
+- BREAKING - useUsers - options passed to this hook have changed, `refetch` function has been removed, and you now just pass the filtering options directly.
+- BREAKING - useStore -> Deprecated and renamed to useHass, useHass functionality has been merged into useStore with methods accessible via the store directly, for example:
+```ts
+// OLD
+const { callService } = useHass();
+// NEW
+const { callService } = useStore.getState().helpers;
+// OLD
+const { windowContext } = useHass();
+// NEW
+const windowContext = useStore((state) => state.windowContext);
+```
+- BREAKING - HassContext, HassContextProps - Removed, and merged with UseHassStore (or HassStore if not using the hook)
+- NEW/BREAKING - useAreas - now supports floors, a floor_id and a FloorRegistryEntry will be associated with an area, the breaking change is that "services" were removed from the area structure.
+
+## NEW FEATURES
+
+### @hakit/components
+- NEW - LightControls - Added support for "favorites" similar to how home assistant displays, we do not have the management of favorite colors via the UI here as home assistant does.
+
+### @hakit/core
+- NEW - useHistory - Updated useHistory subscriptions to match latest logic with home assistant, added new options to support numeric histories and splitting by device class.
+- NEW - useLocalData - A new hook to subscribe to locale data updates from home assistant, this includes information related to formatting language, number and date formatting, the formatter api functions rely on this data to format values correctly and a wide range of helper methods are now available.
+- NEW - useRegistryData - A new hook to subscribe to registry data updates from home assistant for entities, devices, areas, floors and more
+- NEW - useFloors - A new hook to subscribe to floor registry data from home assistant, this will return a hierarchical list of floors and their associated areas, and the devices/entities within the areas, any areas not assigned to a floor will be part of the "Unassigned" floor.
+- NEW - formatter - Convenience formatter methods to format entity states, attributes and date/time values according to the current locale and configuration, this is now accessible via the store `useStore(state => state.formatter)` or programmatically `useStore.getState().formatter`, examples added to the `useStore` docs.
+- NEW - computeDefaultFavoriteColors - A new function to get the default fav colors for a light if supported, as well as lightSupportsFavoriteColors function
+- NEW - entityRegistryEntries now available on the store via useStore(state => state.entityRegistryEntries) or useStore().getState().entityRegistryEntries
+- NEW - getExtendedEntityRegistryEntry - a new method to retrieve a single entity registry entry
+- NEW - getExtendedEntityRegistryEntries - a new method to retrieve multiple entity registry entries at once
+- NEW - updateEntityRegistryEntry - a new method to update an entity registry entry
+- NEW - removeEntityRegistryEntry - a new method to remove an entity registry entry
+- NEW - fetchEntityRegistryDisplayEntry - a new method to fetch the display entry for a single entity
+- NEW - getAutomaticEntityIds - Ask Home Assistant for automatically suggested entity_ids for given IDs.
+- NEW - findBatteryEntity - Find the most relevant battery entity from a list of registry display entries.
+- NEW - findBatteryChargingEntity - Locate a battery charging entity (device_class === "battery_charging") in the provided list.
+- NEW - createAreaRegistryEntry - A new method to create an area registry entry.
+- NEW - updateAreaRegistryEntry - A new method to update an area registry entry.
+- NEW - deleteAreaRegistryEntry - A new method to delete an area registry entry.
+- NEW - subscribeFloorRegistry - A new method to subscribe to floor registry updates.
+- NEW - updateDeviceRegistryEntry - A new method to update a device registry entry.
+- NEW - removeConfigEntryFromDevice- A new method to remove a config entry from a device.
+
+## IMPROVEMENTS
+
+### @hakit/components
+- IMPROVEMENT - Weather Card - Updated some styling issues and layout issues for smaller devices, moved apparent temperature to be in the weather details section automatically when available, locale updates for state values and attributes
+- IMPROVEMENT - Updated multiple components to use the new locale keys
+- IMPROVEMENT - ButtonCard - Updated to use new formatters to format attribute/state values correctly
+
+### @hakit/core
+- updating computeStateDisplay to match home assistant logic
+
+## BUGFIXES
+
+### @hakit/components
+- BUGFIX - LightControls - Fixed bugs relating to the control slider, fixed issue where brightness value wasn't aligning with the slider position and value of the entity, fixed issue where lights that don't support color, temp, brightness would not render a "switch" to control the light on/off state.
+- BUGFIX - Weather Card - updated hard coded "feels like" to use "apparent temperature" locale, localizing state value
+
+
+# 5.1.6
+
+### General 
+
+- Bumping core dependencies, removed a bunch of other unused dependencies
+- Exported VideoPlay and hls/webrtc components for more custom usage outside of CameraCard
+- Fixed bug with `npm create hakit@latest` where the latest vite was conflicting with the post creation steps
+- Upgraded storybook
+- Upgraded locales to match latest home assistant release
+
+### @hakit/components
+- BUGFIX - MediaPlayerCard - Play media now expects a "media" object for media_content_type and media_content_id
+
+### @hakit/core
+- Fixed authentication bug where it would make a duplicate request to /auth causing the first login to fail immediately
+
+# 5.1.5
+- typescript issues.... Nothing worth mentioning
+
+# 5.1.4
+- useTemplate was too restrictive and only setting the state when the value was a string, will now return string/object
+
+# 5.1.3
+- Release failed, bumping again, add a console error for template rendering errors.
+
+# 5.1.2
+
+### @hakit/components
+- BUGFIX - GroupCard - re-rendering children when expanding/collapsing causing flickering
+
+### @hakit/core
+
+- HassConnect - provided `renderError` prop to render custom errors during authentication issues
+- HassConnect - removed `hassToken` from options object
+- useTemplate - added `enabled` property to conditionally enable the template subscription, also fixed a change in home assistant where the useTemplate error subscription wasn't working properly.
+
+
+# 5.1.1
+
+### @hakit/components
+- IMPROVEMENT - Various updates to performance in a few components by updating the zustand store to v5 from v4
+- BUGFIX - TimeCard - was logging missing keys for the formatter tokens, this is now resolved
+- BUGFIX / IMPROVEMENT - All Cards - The scale effect will now only be applied when the card itself is being clicked, if there's buttons with click actions within the card the scale effect will no longer scale whilst these are being tapped, whilst being tapped a class will be added to the base-card of `card-base-active`
+- BUGFIX - MediaPlayerCard - You could open infinite modals by launching another modal by long pressing the media player card in the initial popup, this has been fixed too. The background image of the artwork that is playing is now a separate element instead of a background image on the main card.
+- NEW - disableModal - A flag you can provide to call cards that support entity popups to disable the long press modal functionality and control your own functionality via the `longPressCallback` prop.
+- BUGFIX - CalendarCard - Fixed a bug that was causing the calendar card to re-render too many times.
+- NEW - refCallback - A new method to get the ref element of the base card
+- BUGFIX - TimeCard - was previously not setting keys on the fragment elements that make up the "time" value.
+
+
+
+### @hakit/core
+- NEW - useUsers - a new hook to retrieve all users from the home assistant instance, this will return an array of users with their details, this is useful if you want to display a list of users in your dashboard or use it for other purposes.
+- NEW - useEntities - a new hook to subscribe to multiple entities at once, this will return an array of entities that match the provided entity ids, this is useful if you want to subscribe to multiple entities at once and get their updates in real-time.
+- IMPROVEMENT - useCamera - updated to support [changes](https://github.com/shannonhochkins/ha-component-kit/pull/273) home assistant made back in November last year, thanks to @kdkavanagh for this one!
+- IMPROVEMENT - zustand has been updated to v5, this should improve performance and reduce the amount of re-renders in the application
+- IMPROVEMENT - the connection methods and re-authentication methods have received some love, the web sockets will now be automatically suspended when on an inactive tab ([home assistant does this too](https://github.com/home-assistant/frontend/blob/8eb7fe8b0aa5ce2651e4ee8aa10ecbf3ec899847/src/layouts/home-assistant.ts#L283)), as well as "frozen" tabs/browsers, and will resume when the tab is active again, this should improve performance on slower devices, messages will be queued whilst inactive and will be sent when the tab is active again.
+- NEW - To add to the above, from the store you can now access `connectionStatus` to determine the current state of the connection via `useStore(state => state.connectionStatus)`, this will return a string with the current status of the connection, this is useful if you want to display a message to the user when the connection is lost or re-established, if you want to configure the suspend/resume options you can pass through `handleResumeOptions` via the `options` prop on `HassConnect`
+- IMPROVEMENT - Removed some packages that are no longer needed, this should reduce the bundle size of the core package and improve performance.
+- DEPRECATED - useStore().lastUpdated and useStore().setLastUpdated - these were remnants of the old store implementation, there was nothing using, or even setting this value so i've decided to remove it.
+- IMPROVEMENT - Many optimisations to `useEntity`, much faster updates without throttling/debouncing, however there's been some side effects to this
+   - DEPRECATED - throttle - no longer needed as we update as often as we can
+- BREAKING - home assistant has removed the "kelvin" value you can pass to set the temperature of a light entity and is replaced with `color_temp_kelvin`.
+- BREAKING - getAllEntities - There was an unfortunate side effect of the previous store implementation where getAllEntities would automatically re-trigger a re-render of the component that was using it, the intention of this method is to grab a fresh copy of the entities at the time of the call, not trigger a re-render causing it to get new entities on every entity change, if you are using this method, you can swap it for the following:
+```ts
+// OLD
+const { getAllEntities } = useHass();
+const entities = getAllEntities();
+// NEW
+const { useStore } = useHass();
+const entities = useStore((state) => state.entities);
+```
+- NEW - renderError - a new prop you can provide to the HassConnect component to render the error message anywhere of your choice, useful to show via portals, or even just to match your applications styles.
+
+### Storybook
+- Updated storybook to latest version
+- Bugfix for the MediaPlayerCard, previously the "progress" bar was not displaying correctly (storybook only issue)
+
+### Dependencies
+
+- zustand - now required v5 or higher
+
+
 # 5.1.0
 
 ### @hakit/components

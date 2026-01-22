@@ -84,8 +84,7 @@ const MenuItem = styled.a`
 
 export function Menu({ children, placement = "bottom", items = [], disabled = false, cssStyles, ...props }: MenuProps) {
   const [open, setOpen] = useState(false);
-  const { useStore } = useHass();
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const arrowRef = useRef(null);
   const { refs, floatingStyles, context } = useFloating({
     whileElementsMounted: autoUpdate,

@@ -1,5 +1,5 @@
-import { type Store } from "../../../HassConnect/HassContext";
+import { type Store } from "..";
 
-export function DummyComponent(props: Store) {
+export function DummyComponent(props: Partial<Store>) {
   return props;
 }

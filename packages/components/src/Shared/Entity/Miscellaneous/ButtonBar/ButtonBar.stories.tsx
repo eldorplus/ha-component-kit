@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThemeProvider, ButtonBar, ButtonBarButton, ThemeControlsModal, Row, Alert } from "@components";
 import type { ButtonBarProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
@@ -39,7 +39,7 @@ function Template(args?: Partial<ButtonBarProps>) {
 export default {
   title: "components/Shared/Entity/Miscellaneous/ButtonBar",
   component: ButtonBar,
-  subcomponents: { ButtonBarButton },
+  subcomponents: { ButtonBarButton: ButtonBarButton as React.ComponentType<unknown> },
   tags: ["autodocs"],
   parameters: {
     fullWidth: true,

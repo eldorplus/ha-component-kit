@@ -70,6 +70,44 @@ export const entities: HassEntities = {
       rgb_color: [64, 255, 112],
     },
   }),
+  // Demo light supporting both color temp and rgb for favorite colors showcase
+  ...createLight("light.favorite_colors_demo", {
+    attributes: {
+      friendly_name: "Favorite Colors Demo",
+      supported_color_modes: ["color_temp", "rgb"],
+      color_mode: "rgb",
+      rgb_color: [255, 120, 30],
+      hs_color: [25, 88],
+      brightness: 180,
+      min_color_temp_kelvin: 2000,
+      max_color_temp_kelvin: 6500,
+      color_temp_kelvin: 3000,
+    },
+  }),
+  ...createLight('light.only_color', {
+    attributes: {
+      supported_color_modes: [
+        "hs"
+      ],
+      color_mode: "hs",
+      hs_color: [350, 80],
+      brightness: undefined,
+      off_with_transition: false,
+      off_brightness: null,
+      supported_features: 16,
+      icon: "mdi:lightbulb-color",
+      friendly_name: "Light Only Color",
+      min_color_temp_kelvin: undefined,
+      max_color_temp_kelvin: undefined,
+      min_mireds: undefined,
+      max_mireds: undefined,
+      effect_list: undefined,
+      rgb_color: undefined,
+      xy_color: undefined,
+      raw_state: undefined,
+    },
+  }),
+  // create a light that only supports brightness
   ...createLight("light.no_color", {
     attributes: {
       supported_color_modes: [
@@ -82,6 +120,30 @@ export const entities: HassEntities = {
       supported_features: 40,
       icon: "mdi:lightbulb",
       friendly_name: "Light No Color",
+      min_color_temp_kelvin: undefined,
+      max_color_temp_kelvin: undefined,
+      min_mireds: undefined,
+      max_mireds: undefined,
+      effect_list: undefined,
+      hs_color: undefined,
+      rgb_color: undefined,
+      xy_color: undefined,
+      raw_state: undefined,
+    },
+  }),
+  // create a light that does not support brightness, color, temperature or effects
+  ...createLight("light.simple_light", {
+    attributes: {
+      supported_color_modes: [
+        "onoff"
+      ],
+      color_mode: "onoff",
+      brightness: undefined,
+      off_with_transition: false,
+      off_brightness: null,
+      supported_features: 0,
+      icon: "mdi:lightbulb-outline",
+      friendly_name: "Simple Light",
       min_color_temp_kelvin: undefined,
       max_color_temp_kelvin: undefined,
       min_mireds: undefined,
@@ -113,7 +175,7 @@ export const entities: HassEntities = {
       media_content_type: "music",
       media_duration: 219,
       media_position: 1.819,
-      media_position_updated_at: "2023-09-11T05:34:34.858634+00:00",
+      media_position_updated_at: new Date().toISOString(),
       media_title: "My Way",
       media_artist: "Calvin Harris",
       app_name: "YouTube Music",
@@ -132,7 +194,7 @@ export const entities: HassEntities = {
       media_content_type: "music",
       media_duration: 219,
       media_position: 1.819,
-      media_position_updated_at: "2023-09-11T05:34:34.858634+00:00",
+      media_position_updated_at: new Date().toISOString(),
       media_title: "My Way",
       media_artist: "Calvin Harris",
       app_name: "YouTube Music",
@@ -150,7 +212,7 @@ export const entities: HassEntities = {
       media_content_type: "music",
       media_duration: 219,
       media_position: 1.819,
-      media_position_updated_at: "2023-09-11T05:34:34.858634+00:00",
+      media_position_updated_at: new Date().toISOString(),
       media_title: "My Way",
       media_artist: "Calvin Harris",
       app_name: "YouTube Music",
@@ -254,7 +316,11 @@ export const entities: HassEntities = {
   }),
   ...createCalendar("calendar.google_calendar"),
   ...createCalendar("calendar.another_google_calendar"),
-  ...createWeather("weather.entity"),
+  ...createWeather("weather.entity", {
+    attributes: {
+      apparent_temperature: 22
+    }
+  }),
   ...createWeather("weather.openweathermap", openWeatherFixture),
   ...createClimate("climate.air_conditioner"),
   ...createClimate("climate.unavailable", {

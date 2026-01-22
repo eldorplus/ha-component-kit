@@ -278,8 +278,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   disabled,
   ...rest
 }) => {
-  const { useStore } = useHass();
-  const windowContext = useStore((store) => store.windowContext);
+  const windowContext = useHass((store) => store.windowContext);
   const win = windowContext ?? window;
   const [focused, setFocused] = useState(false);
   const [value, setValue] = useState<string | null>(initialValue);

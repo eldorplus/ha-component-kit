@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThemeProvider, ButtonGroup, ButtonGroupButton, ThemeControlsModal } from "@components";
 import type { ButtonGroupProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
@@ -26,7 +26,7 @@ function Template(args?: Partial<ButtonGroupProps>) {
 export default {
   title: "components/Shared/Entity/Miscellaneous/ButtonGroup",
   component: ButtonGroup,
-  subcomponents: { ButtonGroupButton },
+  subcomponents: { ButtonGroupButton: ButtonGroupButton as React.ComponentType<unknown> },
   tags: ["autodocs"],
   parameters: {
     fullWidth: true,

@@ -24,8 +24,9 @@ import {
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { useRef, useEffect, useState, useCallback } from "react";
+import { useShallow } from "zustand/shallow";
 
-const StyledCalendarCard = styled(CardBase)`
+const StyledCalendarCard = styled(CardBase as React.ComponentType<CardBaseProps<"div", FilterByDomain<EntityName, "calendar">>>)`
   .contents .calendar > * {
     flex-grow: 1;
     background-color: var(--ha-S300);
@@ -409,9 +410,9 @@ function InternalCalendarCard({
   key,
   ...rest
 }: CalendarCardProps): React.ReactNode {
-  const { useStore } = useHass();
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
-  const config = useStore((store) => store.config);
+  const { callApi } = useHass.getState().helpers;
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
+  const config = useHass((store) => store.config);
   const calRef = useRef<FullCalendar>(null);
   const initialRequest = useRef(false);
   const [error, setError] = useState<string | null>(null);
@@ -423,11 +424,10 @@ function InternalCalendarCard({
     handleHeight: false,
     refreshRate: 500,
   });
-  const { callApi, getAllEntities } = useHass();
   const [currentEvent, setCurrentEvent] = useState<CalendarEventWithEntity | null>(null);
-  const allEntities = getAllEntities();
+  const calEntities = useHass(useShallow((state) => entities.map((id) => state.entities[id])));
   const [activeView, setActiveView] = useState<CalendarCardProps["view"]>(view ?? "dayGridMonth");
-  const calEntities = entities.map((entity) => allEntities[entity]);
+
   const calendars = calEntities.filter((entity) => !isUnavailableState(entity?.state));
   const fetchEvents = useCallback(
     async (info: EventSourceFuncArg, successCallback: (events: EventInput[]) => void): Promise<void> => {
@@ -483,7 +483,7 @@ function InternalCalendarCard({
         });
       });
       if (errors.length > 0) {
-        setError(`${localize("calendar_event_retrieval_error")}: "${errors.join(", ")}".`);
+        setError(`${localize("components.calendar.event_retrieval_error")}: "${errors.join(", ")}".`);
         successCallback([]);
       } else {
         successCallback(calEvents);
@@ -753,7 +753,7 @@ function InternalCalendarCard({
         </Modal>
       )}
       {error && (
-        <Alert title={localize("calendar_event_retrieval_error")} type="error">
+        <Alert title={localize("components.calendar.event_retrieval_error")} type="error">
           {error}
         </Alert>
       )}

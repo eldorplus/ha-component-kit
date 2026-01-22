@@ -99,7 +99,7 @@ export const MediaPlayerControls = ({
       if (playingSpeakers.length === 0) {
         mediaPlayerService.playMedia({
           target: entity.attributes?.group_members ?? entity.entity_id,
-          serviceData: { ...lastPlayedMedia, enqueue: "play" },
+          serviceData: { media: { ...lastPlayedMedia }, enqueue: "play" },
         });
         return mediaPlayerService.mediaPlay({
           target: entity.attributes?.group_members ?? entity.entity_id,
@@ -172,6 +172,8 @@ export const MediaPlayerControls = ({
             disableColumns
             entity={primaryEntity.entity_id as FilterByDomain<EntityName, "media_player">}
             hideGrouping={true}
+            disableScale
+            disableModal
           />
         )}
         {allEntityIds.length > 1 && (

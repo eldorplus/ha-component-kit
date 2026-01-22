@@ -1,7 +1,7 @@
-import type { Preview } from "@storybook/react";
+import type { Preview } from "@storybook/react-vite";
 import React from "react";
 import { withThemeFromJSXProvider } from '@storybook/addon-themes';
-import { ThemeProvider } from '@storybook/theming';
+import { ThemeProvider } from 'storybook/theming';
 import { Page } from "./page";
 import { redirectToStory } from './redirect';
 import './global.css';
@@ -75,32 +75,56 @@ export default {
     },
     options: {
       storySort: (a, b) => {
-        const splitAndTakeFirst = (str, delimiter) => str.split(delimiter)[0];
-        const getOrderIndex = (order, item) => order.indexOf(item);
-        const getNumericPrefix = (str) => parseInt(str.match(/\d+/)?.[0] || "-1", 10);
-      
-        const aTitle = splitAndTakeFirst(a.title, '/');
-        const bTitle = splitAndTakeFirst(b.title, '/');
-      
-        const order = ['INTRODUCTION', 'COMPONENTS', 'HOOKS', 'ADVANCED'];
-      
-        const aOrderIndex = getOrderIndex(order, aTitle);
-        const bOrderIndex = getOrderIndex(order, bTitle);
-      
-        if (aOrderIndex !== -1 && bOrderIndex !== -1) {
-          if (aOrderIndex === bOrderIndex) {
-            // Both have the same top-level title. Sort based on the numeric prefix in importPath.
-            const aNumericPrefix = getNumericPrefix(a.importPath);
-            const bNumericPrefix = getNumericPrefix(b.importPath);
-            return aNumericPrefix - bNumericPrefix;
-          }
-          return aOrderIndex - bOrderIndex;
+        // return aTitle.localeCompare(bTitle);
+        const splitAndTakeFirst = (str) => str.split('/')[0];
+        const stripGroup = (full, group) => full.replace(`${group}/`, '');
+
+        const groupOrder = ['INTRODUCTION', 'EDITOR', 'COMPONENTS', 'HOOKS'];
+
+        const aGroup = splitAndTakeFirst(a.title).toUpperCase();
+        const bGroup = splitAndTakeFirst(b.title).toUpperCase();
+
+        const aIdx = groupOrder.indexOf(aGroup);
+        const bIdx = groupOrder.indexOf(bGroup);
+
+        // if they’re in different top-level groups, respect custom order
+        if (aIdx !== bIdx) {
+          // put unknown groups at the end
+          const ai = aIdx === -1 ? Infinity : aIdx;
+          const bi = bIdx === -1 ? Infinity : bIdx;
+          return ai - bi;
         }
-      
-        if (aOrderIndex !== -1) return -1;
-        if (bOrderIndex !== -1) return 1;
-      
-        return aTitle.localeCompare(bTitle);
+
+        // same group: strip off the "HOOKS/" (or "COMPONENTS/", etc.) prefix
+        const aName = stripGroup(a.title, aGroup);
+        const bName = stripGroup(b.title, bGroup);
+
+        // Custom sorting for INTRODUCTION group
+        if (aGroup === 'INTRODUCTION') {
+          const introOrder = [
+            'Getting Started',
+            'Demo', 
+            'Deploying',
+            'Responsive layouts',
+            'TypescriptSync',
+            'Issues & Discussions',
+            'Changelog'
+          ];
+          
+          const aIntroIdx = introOrder.findIndex(item => aName.toLowerCase().includes(item.toLowerCase()));
+          const bIntroIdx = introOrder.findIndex(item => bName.toLowerCase().includes(item.toLowerCase()));
+          
+          // If both items are found in the custom order, use that order
+          if (aIntroIdx !== -1 && bIntroIdx !== -1) {
+            return aIntroIdx - bIntroIdx;
+          }
+          // If only one is found, prioritize the one in the custom order
+          if (aIntroIdx !== -1) return -1;
+          if (bIntroIdx !== -1) return 1;
+        }
+
+        // then just do a normal string compare for other groups
+        return aName.localeCompare(bName);
       },
     },
     docs: {

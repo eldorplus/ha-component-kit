@@ -11,7 +11,7 @@ import {
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { Children, isValidElement, cloneElement, type ReactElement } from "react";
-const StyledEntitiesCard = styled(CardBase)`
+const StyledEntitiesCard = styled(CardBase as React.ComponentType<CardBaseProps<"div", EntityName>>)`
   svg {
     color: currentColor;
   }
@@ -53,8 +53,7 @@ function InternalEntitiesCard({
   cssStyles,
   ...rest
 }: EntitiesCardProps): React.ReactNode {
-  const { useStore } = useHass();
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const childrenWithKeys = Children.map(children, (child, index) => {
     if (isValidElement<EntitiesCardRowProps<EntityName>>(child)) {
       return cloneElement(child, {

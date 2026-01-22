@@ -93,9 +93,8 @@ export interface TooltipProps extends Omit<React.ComponentPropsWithRef<"div">, "
 function InternalTooltip({ placement = "top", title = null, children, ref, ...rest }: TooltipProps) {
   const tooltipRef = useRef<HTMLSpanElement | null>(null);
   const childRef = useRef<HTMLDivElement | null>(null);
-  const { useStore } = useHass();
-  const portalRoot = useStore((store) => store.portalRoot);
-  const windowContext = useStore((store) => store.windowContext);
+  const portalRoot = useHass((store) => store.portalRoot);
+  const windowContext = useHass((store) => store.windowContext);
   const win = windowContext ?? window;
   const [show, setShow] = useState(false);
 

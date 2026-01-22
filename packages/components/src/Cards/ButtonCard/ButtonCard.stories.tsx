@@ -1,5 +1,5 @@
-import { Source } from "@storybook/blocks";
-import type { Meta, StoryObj, Args } from "@storybook/react";
+import { Source } from "@storybook/addon-docs/blocks";
+import type { Meta, StoryObj, Args } from "@storybook/react-vite";
 import { ThemeProvider, Group, Column, ButtonCard, ThemeControlsModal } from "@components";
 import type { ButtonCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
@@ -21,6 +21,7 @@ function Template(args?: Partial<ButtonCardProps<"switch.fake_switch">>) {
         <ButtonCard service="toggle" entity="light.fake_light_1" />
         <ButtonCard service="toggle" entity="media_player.fake_tv" />
         <ButtonCard service="toggle" entity="light.unavailable" />
+        <ButtonCard service="toggle" entity="light.simple_light" title="Simple Light" />
       </Group>
     </HassConnect>
   );

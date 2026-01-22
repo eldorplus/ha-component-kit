@@ -286,9 +286,8 @@ function InternalSidebarCard({
   ...rest
 }: SidebarCardProps) {
   const [open, setOpen] = useState(startOpen);
-  const { useStore } = useHass();
-  const routes = useStore((state) => state.routes);
-  const hash = useStore((state) => state.hash);
+  const routes = useHass((state) => state.routes);
+  const hash = useHass((state) => state.hash);
   const devices = useBreakpoint();
   const concatenatedMenuItems = useMemo<MenuItem[]>(() => {
     const mappedRoutes = routes.map<MenuItem>((route) => ({

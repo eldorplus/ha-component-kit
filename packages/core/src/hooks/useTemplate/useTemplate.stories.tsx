@@ -1,11 +1,13 @@
-import { Story, Source, Title, Description, ArgTypes } from "@storybook/blocks";
-import type { Meta, StoryObj } from "@storybook/react";
+import { Story, Source, Title, Description, ArgTypes } from "@storybook/addon-docs/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useTemplate, useEntity } from "@hakit/core";
 import { ThemeProvider, Column, Alert, Row, FabCard, ThemeControlsModal } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import { templateCodeToProcess } from "./examples/constants";
 import basicExample from "./examples/basic.code?raw";
 import simpleExample from "./examples/simple.code?raw";
+import disableExample from "./examples/disable.code?raw";
+import { DummyComponentOptions } from "./examples/DummyComponent";
 
 function SubscribeTemplateExample() {
   const entity = useEntity("light.fake_light_1");
@@ -32,6 +34,11 @@ function SubscribeTemplateExample() {
       <Alert type="info" title={`Template result: ${template ?? "loading"}`} />
       <Alert type="warning" title="Here's the source code for the above template example:" cssStyles={`margin-top: 2rem;`} />
       <Source dark code={basicExample} />
+      <Alert
+        type="info"
+        title="You can disable the template by setting the enable property to false which will conditionally run the hook subscription"
+      />
+      <Source dark code={disableExample} />
     </Column>
   );
 }
@@ -63,7 +70,8 @@ export default {
             <mark>{`useTemplate(params: TemplateParams)`}</mark>
           </h5>
           <Description />
-          <ArgTypes />
+          <h4>Params definition</h4>
+          <ArgTypes of={DummyComponentOptions} />
           <p>The following is the use of the hook in it&apos;s default form:</p>
           <Source dark code={simpleExample} />
           <p>Here&apos;s a working example of how this hook functions when connected to entities:</p>
@@ -72,54 +80,6 @@ export default {
       ),
       description: {
         component: `A hook to render templates the same way home assistant allows you to through yaml files. This hook will automatically update whenever something changes that should indicate the template should be updated, This hook will follow all available features with template (https://www.home-assistant.io/docs/configuration/templating) specified and handled from Home Assistant.`,
-      },
-    },
-  },
-  argTypes: {
-    template: {
-      control: "text",
-      description: "The template expression to process",
-      table: {
-        type: { summary: "string" },
-      },
-    },
-    entity_ids: {
-      control: "object",
-      description: "The entity ids or id to watch for changes, this has been marked as @deprecated and may not be needed to use this",
-      table: {
-        type: { summary: "EntityName | EntityName[]" },
-      },
-    },
-    variables: {
-      control: "object",
-      description:
-        "Variables to define to use within the template\n@example\nvariables: { entity_id: 'climate.air_conditioner' }\nYou can now use entity_id in your template expression",
-      table: {
-        type: { summary: "Record<string, unknown>" },
-      },
-    },
-    timeout: {
-      control: "number",
-      description: "Amount of time that should pass before aborting the template request",
-      table: {
-        type: { summary: "number" },
-        defaultValue: { summary: "undefined" },
-      },
-    },
-    strict: {
-      control: "boolean",
-      description: "Should the template renderer be strict, raise on undefined variables etc",
-      table: {
-        type: { summary: "boolean" },
-        defaultValue: { summary: "false" },
-      },
-    },
-    report_errors: {
-      control: "boolean",
-      description: "Should the template renderer report any errors",
-      table: {
-        type: { summary: "boolean" },
-        defaultValue: { summary: "false" },
       },
     },
   },

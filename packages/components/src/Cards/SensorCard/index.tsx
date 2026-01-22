@@ -23,8 +23,7 @@ function InternalSensorCard<E extends EntityName>({
   serviceData,
   ...rest
 }: SensorCardProps<E>): React.ReactNode {
-  const { useStore } = useHass();
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   return (
     <StyledSensorCard
       disableActiveState

@@ -1,0 +1,46 @@
+import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
+import basicExample from './examples/basic.code?raw';
+import filteringExample from './examples/filtering.code?raw';
+import * as Primary from './examples/primary.stories';
+import { redirectToStory } from '../../../../../.storybook/redirect';
+
+import { DummyComponent, DummyComponentAuthUser, DummyComponentUseUsersOptions } from './examples/DummyComponent';
+
+<Meta title="core/hooks/useUsers" parameters={{
+  docs: {
+    page: null,
+  }
+}} />
+
+# useUsers()
+###### `useUsers(options?: { includeSystemGenerated?: boolean; includeInactiveUsers?: boolean }): AuthUser[]`
+
+Returns a filtered array of Home Assistant users from the internal store. No loading or error state is exposed; if users have not been fetched yet an empty array is returned. Filtering happens client-side.
+
+### Options
+
+<ArgTypes of={DummyComponentUseUsersOptions} />
+
+Updates are applied when the provider refreshes its user store (e.g. on initial load). There is no live push subscription for user list changes; to see external changes reload the page or implement a manual refresh routine.
+
+Dependency: Must be called within `HassConnect` provider context.
+
+### Example Usage
+
+<Source dark code={basicExample} />
+
+### Filtering Example
+
+<Source dark code={filteringExample} />
+
+#### Outputs
+
+<Canvas of={Primary.PrimaryExample} />
+
+### Returned Value
+
+The hook returns only an `AuthUser[]`, this array may be empty whilst data is being fetched
+
+### AuthUser definition
+
+<ArgTypes of={DummyComponentAuthUser} />
